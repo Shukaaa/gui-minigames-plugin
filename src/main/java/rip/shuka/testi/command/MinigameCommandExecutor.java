@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import rip.shuka.testi.command.commands.HelpCommand;
 import rip.shuka.testi.command.commands.TictactoeCommand;
 import rip.shuka.testi.message.MessageSender;
 import rip.shuka.testi.message.MessageStatus;
@@ -12,7 +13,8 @@ import java.util.List;
 
 public class MinigameCommandExecutor implements CommandExecutor {
 	public static List<MinigameCommand> subCommands = List.of(
-		new TictactoeCommand()
+			new HelpCommand(),
+			new TictactoeCommand()
 	);
 
 	@Override
@@ -22,17 +24,9 @@ public class MinigameCommandExecutor implements CommandExecutor {
 			return true;
 		}
 
-		if (args[0].equalsIgnoreCase("help")) {
-			MessageSender.send("Minigame Help", sender, MessageStatus.NEUTRAL);
-			for (MinigameCommand subCommand : subCommands) {
-				MessageSender.send('/' + label + ' ' + subCommand.getName() + " <player>" + " - " + subCommand.getDescription(), sender, MessageStatus.NEUTRAL);
-			}
-			return true;
-		}
-
 		for (MinigameCommand subCommand : subCommands) {
 			if (subCommand.getName().equalsIgnoreCase(args[0])) {
-				subCommand.execute(sender, args);
+				subCommand.execute(sender, args, label);
 				return true;
 			}
 		}

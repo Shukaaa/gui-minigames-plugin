@@ -21,11 +21,9 @@ public class MinigameCommandTabCompleter implements TabCompleter {
 		}
 
 		if (args.length == 2) {
-			MinigameCommandExecutor.subCommands.forEach(commandExecutor -> {
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					completions.add(player.getName());
-				}
-			});
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				completions.add(player.getName());
+			}
 		}
 
 		return completions;

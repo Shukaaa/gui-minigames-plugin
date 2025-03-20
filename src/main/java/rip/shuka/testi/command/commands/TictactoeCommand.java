@@ -19,9 +19,19 @@ public class TictactoeCommand implements MinigameCommand {
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
+	public boolean hasPlayerInput() {
+		return true;
+	}
+
+	@Override
+	public void execute(CommandSender sender, String[] args, String label) {
 		if (args.length < 2) {
 			MessageSender.send("Invalid arguments. Type /minigame help for more information.", sender, MessageStatus.FAILURE);
+			return;
+		}
+
+		if (args[1].equalsIgnoreCase(sender.getName())) {
+			MessageSender.send("You can't play this game with yourself.", sender, MessageStatus.FAILURE);
 			return;
 		}
 
