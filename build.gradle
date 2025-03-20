@@ -5,7 +5,9 @@ plugins {
 }
 
 group = 'rip.shuka'
-version = '1.0'
+
+def gitTag = 'git describe --tags --always'.execute().text.trim()
+version = gitTag.startsWith("v") ? gitTag.substring(1) : gitTag
 
 repositories {
     mavenCentral()
