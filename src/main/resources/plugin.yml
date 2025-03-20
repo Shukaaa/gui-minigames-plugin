@@ -1,0 +1,13 @@
+name: testi
+version: '1.0'
+main: rip.shuka.testi.Testi
+api-version: '1.21'
+authors: [ mraduchi ]
+description: Awesome Client WOW MEGA!!!
+website: shukaaa.rip
+commands:
+  minigame:
+    description: Minigames Command
+    usage: /<command>
+    permission: minigame.command
+    aliases: [ mg ]

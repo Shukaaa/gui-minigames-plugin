@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  papermc:
+    image: itzg/minecraft-server
+    container_name: papermc-server
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"
+      VERSION: "1.21.4"
+      MEMORY: "4G"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "minecraft"
+      RCON_PORT: "25575"
+    ports:
+      - "25565:25565"  # Minecraft Server
+    volumes:
+      - ./data:/data
+      - ./build/libs:/libs
+    entrypoint: >
+      /bin/sh -c "mkdir -p /data/plugins && cp /libs/*.jar /data/plugins/ 2>/dev/null || true && exec /start"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    container_name: minecraft-postgres
+    environment:
+      POSTGRES_DB: "minecraft"
+      POSTGRES_USER: "minecraft"
+      POSTGRES_PASSWORD: "pw"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
