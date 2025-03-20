@@ -20,6 +20,6 @@ Darüber hinaus besteht eine Anbindung an eine Datenbank, mit der Statistiken zw
 2. Das `init.sql`-Skript in der Datenbank ausführen, um die Tabellen zu erstellen.
 3. Zum Erstellen der `.jar`-Datei den Task `shadow/shadowJar` ausführen.
 4. Den `papermc-server` aus dem `docker-compose`-Setup neu starten.
-5. Die Plugin-Dateien werden automatisch während des Builds in das Plugin-Verzeichnis kopiert und der Server ist betriebsbereit.
+5. Die Plugin-Dateien werden automatisch in das Plugin-Verzeichnis des Docker-Containers kopiert und der Server ist ready.
 
 In der Datei `resource/config.yml` ist bereits eine Standardkonfiguration enthalten, die für die Kommunikation mit der von `docker-compose` bereitgestellten Datenbank eingerichtet ist.
