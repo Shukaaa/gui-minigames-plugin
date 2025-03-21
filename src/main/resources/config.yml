@@ -1,4 +1,6 @@
 database:
-  url: "jdbc:postgresql://minecraft-postgres:5432/minecraft"
+  hostname: "localhost"
   user: "minecraft"
   password: "pw"
+  port: 5432
+  database: "minigames"

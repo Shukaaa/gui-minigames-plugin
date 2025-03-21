@@ -7,14 +7,14 @@ import java.sql.*;
 import java.util.UUID;
 
 public class GameStatsService {
-	public static void init(String url, String user, String password) throws SQLException {
+	public static void init(String hostname, String user, String password, int port, String database) throws SQLException {
 		try {
 			Class.forName("org.postgresql.Driver"); // Treiber laden
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("PostgreSQL-Treiber konnte nicht geladen werden.", e);
 		}
 
-		DatabaseManager.init(url, user, password);
+		DatabaseManager.init(hostname, user, password, port, database);
 	}
 
 	public static GameStats getStats(UUID player1, UUID player2, String game) {

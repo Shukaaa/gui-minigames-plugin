@@ -18,9 +18,11 @@ public final class Testi extends JavaPlugin {
 
 		try {
 			GameStatsService.init(
-					config.getString("database.url"),
+					config.getString("database.hostname"),
 					config.getString("database.user"),
-					config.getString("database.password")
+					config.getString("database.password"),
+					config.getInt("database.port"),
+					config.getString("database.database")
 			);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

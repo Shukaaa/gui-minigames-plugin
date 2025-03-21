@@ -9,9 +9,9 @@ import java.sql.SQLException;
 public class DatabaseManager {
 	private static HikariDataSource dataSource;
 
-	public static void init(String url, String user, String password) {
+	public static void init(String hostname, String user, String password, int port, String database) {
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl(url);
+		config.setJdbcUrl("jdbc:postgresql://" + hostname + ":" + port + "/" + database);
 		config.setUsername(user);
 		config.setPassword(password);
 		dataSource = new HikariDataSource(config);
