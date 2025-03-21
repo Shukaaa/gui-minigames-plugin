@@ -25,7 +25,7 @@ services:
     image: postgres:latest
     container_name: minecraft-postgres
     environment:
-      POSTGRES_DB: "minecraft"
+      POSTGRES_DB: "minigames"
       POSTGRES_USER: "minecraft"
       POSTGRES_PASSWORD: "pw"
     ports:
