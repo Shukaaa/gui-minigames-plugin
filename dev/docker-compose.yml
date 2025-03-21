@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   papermc:
     image: itzg/minecraft-server
-    container_name: papermc-server
+    container_name: testi-papermc-server
     environment:
       EULA: "TRUE"
       TYPE: "PAPER"
@@ -16,14 +14,20 @@ services:
       - "25565:25565"  # Minecraft Server
     volumes:
       - ./data:/data
-      - ./build/libs:/libs
+      - ../build/libs:/libs
     entrypoint: >
-      /bin/sh -c "mkdir -p /data/plugins && cp /libs/*.jar /data/plugins/ 2>/dev/null || true && exec /start"
+      /bin/sh -c "
+      mkdir -p /data/plugins && \
+      echo 'Cleaning up old plugins...' && \
+      rm -f /data/plugins/*.jar && \
+      echo 'Copying new plugins...' && \
+      cp -v /libs/*.jar /data/plugins/ && \
+      exec /start"
     restart: unless-stopped
 
   postgres:
     image: postgres:latest
-    container_name: minecraft-postgres
+    container_name: testi-postgres
     environment:
       POSTGRES_DB: "minigames"
       POSTGRES_USER: "minecraft"
@@ -31,8 +35,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - testi_postgres_data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  testi_postgres_data:

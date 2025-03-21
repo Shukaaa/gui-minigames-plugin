@@ -16,10 +16,8 @@ Darüber hinaus besteht eine Anbindung an eine Datenbank, mit der Statistiken zw
 
 ### Schritte zum Starten des Projekts
 
-1. Die `docker-compose.yml` starten.
-2. Das `init.sql`-Skript in der Datenbank ausführen, um die Tabellen zu erstellen.
-3. Zum Erstellen der `.jar`-Datei den Task `shadow/shadowJar` ausführen.
-4. Den `papermc-server` aus dem `docker-compose`-Setup neu starten.
-5. Die Plugin-Dateien werden automatisch in das Plugin-Verzeichnis des Docker-Containers kopiert und der Server ist ready.
+**Führe den Task `dev/buildAndRunServer` aus**.
+
+Mit dem Befehl `dev/buildAndRunServer` wird das gesamte System mithilfe Docker automatisch gebaut, konfiguriert und gestartet. Er vereinfacht die Entwicklung enorm, da alle nötigen Schritte – vom Erstellen des Builds über das Starten des Minecraft-Servers mit dem neuen Plugin – in einem einzigen Task kombiniert werden.
 
 In der Datei `resource/config.yml` ist bereits eine Standardkonfiguration enthalten, die für die Kommunikation mit der von `docker-compose` bereitgestellten Datenbank eingerichtet ist.

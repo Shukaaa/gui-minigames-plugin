@@ -64,3 +64,70 @@ shadowJar {
 kotlin {
     jvmToolchain(21)
 }
+
+// Dev Tasks
+def paperMcContainerName = "testi-papermc-server"
+
+tasks.register("checkAndRunDockerCompose") {
+    group = "dev"
+    description = "Prüft, ob Docker-Compose jemals ausgeführt wurde, und führt es aus, wenn es das erste Mal ist."
+
+    doLast {
+        println "Überprüfe, ob Docker-Compose-Container existieren..."
+
+        def outputStream = new ByteArrayOutputStream()
+        def errorOccurred = false
+
+        exec {
+            commandLine "docker", "ps", "-a", "--filter", "name=${paperMcContainerName}", "--format", "{{.Names}}"
+            standardOutput = outputStream
+            errorOutput = outputStream
+            ignoreExitValue = true // Fehler ignorieren, falls "docker ps" keinen passenden Container findet
+        }
+
+        def containerExists = outputStream.toString().trim()
+
+        if (containerExists.isEmpty()) {
+            // Container existiert nicht, also Docker-Compose starten
+            println "Container wurde bisher nicht erstellt. Starte docker-compose für das erste Mal..."
+            try {
+                exec {
+                    commandLine "docker-compose", "--project-directory", "./dev", "up", "-d"
+                }
+                println "Docker-Compose wurde erfolgreich ausgeführt."
+            } catch (Exception e) {
+                println "Fehler beim Ausführen von Docker-Compose: ${e.message}"
+                errorOccurred = true
+            }
+        } else {
+            println "Container existiert bereits. Docker-Compose wird nicht erneut ausgeführt."
+        }
+
+        if (errorOccurred) {
+            throw new GradleException("Fehler beim Starten von Docker-Compose.")
+        }
+    }
+}
+
+tasks.register("buildAndRunServer") {
+    group = "dev"
+    description = "Baut das Plugin und startet den Minecraft-Server neu."
+
+    dependsOn tasks.checkAndRunDockerCompose
+    dependsOn tasks.clean
+    dependsOn tasks.shadowJar
+
+    doLast {
+        println "Stopping the PaperMC Docker container..."
+        exec {
+            commandLine "docker", "stop", "${paperMcContainerName}"
+        }
+
+        println "Starting the PaperMC Docker container..."
+        exec {
+            commandLine "docker", "start", "${paperMcContainerName}"
+        }
+
+        println "PaperMC Server has been restarted successfully."
+    }
+}

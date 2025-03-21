@@ -1,5 +1,5 @@
 database:
-  hostname: "minecraft-postgres"
+  hostname: "testi-postgres"
   user: "minecraft"
   password: "pw"
   port: 5432
