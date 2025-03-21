@@ -1,5 +1,5 @@
 database:
-  hostname: "localhost"
+  hostname: "minecraft-postgres"
   user: "minecraft"
   password: "pw"
   port: 5432
