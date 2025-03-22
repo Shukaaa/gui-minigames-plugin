@@ -106,7 +106,7 @@ public class TictactoeInventory implements InventoryHolder {
 				Component.text(player2.getName() + " Wins: ", NamedTextColor.WHITE)
 						.append(Component.text(player2wins, NamedTextColor.BLUE)),
 				Component.text(player2.getName() + " Win Rate: ", NamedTextColor.WHITE)
-						.append(Component.text(player2WinRate + "%", NamedTextColor.RED)),
+						.append(Component.text(player2WinRate + "%", NamedTextColor.BLUE)),
 				Component.text(""),
 				Component.text("Unentschieden: ", NamedTextColor.WHITE)
 						.append(Component.text(stats.draws(), NamedTextColor.GRAY))
