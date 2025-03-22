@@ -1,9 +1,9 @@
 package rip.shuka.testi.stats;
 
-import kotlin.Pair;
 import rip.shuka.testi.database.DatabaseManager;
 
 import java.sql.*;
+import java.util.List;
 import java.util.UUID;
 
 public class GameStatsService {
@@ -28,18 +28,18 @@ public class GameStatsService {
 				"(player1_uuid = ? AND player2_uuid = ?) AND game_name = ?";
 
 		try {
-			Pair<UUID, UUID> sortedUuids = sortUuids(player1, player2);
+			List<UUID> sortedUuids = sortUuids(player1, player2);
 
 			try (PreparedStatement insertStmt = DatabaseManager.getConnection().prepareStatement(checkAndInsertSql)) {
 				insertStmt.setObject(1, sortedUuids.getFirst());
-				insertStmt.setObject(2, sortedUuids.getSecond());
+				insertStmt.setObject(2, sortedUuids.getLast());
 				insertStmt.setString(3, game);
 				insertStmt.executeUpdate();
 			}
 
 			try (PreparedStatement selectStmt = DatabaseManager.getConnection().prepareStatement(selectSql)) {
 				selectStmt.setObject(1, sortedUuids.getFirst());
-				selectStmt.setObject(2, sortedUuids.getSecond());
+				selectStmt.setObject(2, sortedUuids.getLast());
 				selectStmt.setString(3, game);
 
 				ResultSet rs = selectStmt.executeQuery();
@@ -67,7 +67,7 @@ public class GameStatsService {
 	}
 
 	public static void addWin(UUID winner, UUID loser, String gameName) {
-		Pair<UUID, UUID> sortedUuids = sortUuids(winner, loser);
+		List<UUID> sortedUuids = sortUuids(winner, loser);
 		boolean isWinnerFirst = sortedUuids.getFirst().equals(winner);
 
 		String sql = "INSERT INTO player_stats (player1_uuid, player2_uuid, game_name, player1_wins, player2_wins, draws) " +
@@ -78,7 +78,7 @@ public class GameStatsService {
 
 		try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setObject(1, sortedUuids.getFirst());
-			stmt.setObject(2, sortedUuids.getSecond());
+			stmt.setObject(2, sortedUuids.getLast());
 			stmt.setString(3, gameName);
 			stmt.setInt(4, isWinnerFirst ? 1 : 0);
 			stmt.setInt(5, isWinnerFirst ? 0 : 1);
@@ -92,7 +92,7 @@ public class GameStatsService {
 	}
 
 	public static void addDraw(UUID player1, UUID player2, String gameName) {
-		Pair<UUID, UUID> sortedUuids = sortUuids(player1, player2);
+		List<UUID> sortedUuids = sortUuids(player1, player2);
 
 		String sql = "INSERT INTO player_stats (player1_uuid, player2_uuid, game_name, player1_wins, player2_wins, draws) " +
 				"VALUES (?, ?, ?, 0, 0, 1) " +
@@ -101,7 +101,7 @@ public class GameStatsService {
 
 		try (Connection conn = DatabaseManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setObject(1, sortedUuids.getFirst());
-			stmt.setObject(2, sortedUuids.getSecond());
+			stmt.setObject(2, sortedUuids.getLast());
 			stmt.setString(3, gameName);
 
 			stmt.executeUpdate();
@@ -110,11 +110,11 @@ public class GameStatsService {
 		}
 	}
 
-	private static Pair<UUID, UUID> sortUuids(UUID uuid1, UUID uuid2) {
+	private static List<UUID> sortUuids(UUID uuid1, UUID uuid2) {
 		if (uuid1.compareTo(uuid2) < 0) {
-			return new Pair<>(uuid1, uuid2);
+			return List.of(uuid1, uuid2);
 		} else {
-			return new Pair<>(uuid2, uuid1);
+			return List.of(uuid2, uuid1);
 		}
 	}
 }

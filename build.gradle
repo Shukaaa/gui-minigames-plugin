@@ -67,6 +67,7 @@ kotlin {
 
 // Dev Tasks
 def paperMcContainerName = "testi-papermc-server"
+def dbContainerName = "testi-postgres"
 
 tasks.register("checkAndRunDockerCompose") {
     group = "dev"
@@ -109,23 +110,70 @@ tasks.register("checkAndRunDockerCompose") {
     }
 }
 
+tasks.register("startDatabaseIfNotRunning") {
+    group = "dev"
+    description = "Prüft, ob die Datenbank läuft, und startet sie, falls sie nicht läuft."
+
+    doLast {
+        println "Überprüfe den Status des Datenbank-Containers: ${dbContainerName}..."
+
+        def outputStream = new ByteArrayOutputStream()
+        def errorOccurred = false
+
+        try {
+            // Prüfen, ob der Container läuft
+            exec {
+                commandLine "docker", "inspect", "--format", "{{.State.Running}}", dbContainerName
+                standardOutput = outputStream
+                errorOutput = outputStream
+                ignoreExitValue = true // Ignoriere Exit-Fehler, wenn der Container nicht existiert
+            }
+
+            def isRunning = outputStream.toString().trim()
+
+            if (isRunning == "true") {
+                println "Datenbank-Container ${dbContainerName} läuft bereits."
+            } else {
+                println "Datenbank-Container ${dbContainerName} läuft nicht. Versuche, ihn zu starten..."
+                try {
+                    exec {
+                        commandLine "docker", "start", dbContainerName
+                    }
+                    println "Datenbank-Container ${dbContainerName} wurde erfolgreich gestartet."
+                } catch (Exception e) {
+                    println "Fehler beim Starten des Containers: ${e.message}"
+                    errorOccurred = true
+                }
+            }
+        } catch (Exception e) {
+            println "Fehler bei der Statusprüfung des Containers: ${e.message}"
+            errorOccurred = true
+        }
+
+        if (errorOccurred) {
+            throw new GradleException("Fehler beim Starten oder Prüfen des Datenbank-Containers.")
+        }
+    }
+}
+
 tasks.register("buildAndRunServer") {
     group = "dev"
     description = "Baut das Plugin und startet den Minecraft-Server neu."
 
     dependsOn tasks.checkAndRunDockerCompose
+    dependsOn tasks.startDatabaseIfNotRunning
     dependsOn tasks.clean
     dependsOn tasks.shadowJar
 
     doLast {
         println "Stopping the PaperMC Docker container..."
         exec {
-            commandLine "docker", "stop", "${paperMcContainerName}"
+            commandLine "docker", "stop", paperMcContainerName
         }
 
         println "Starting the PaperMC Docker container..."
         exec {
-            commandLine "docker", "start", "${paperMcContainerName}"
+            commandLine "docker", "start", paperMcContainerName
         }
 
         println "PaperMC Server has been restarted successfully."
