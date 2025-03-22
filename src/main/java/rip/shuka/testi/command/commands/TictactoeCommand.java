@@ -1,7 +1,12 @@
 package rip.shuka.testi.command.commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import rip.shuka.testi.command.MinigameCommand;
 import rip.shuka.testi.game.tictactoe.TictactoeGame;
 import rip.shuka.testi.message.MessageSender;
@@ -35,7 +40,20 @@ public class TictactoeCommand implements MinigameCommand {
 			return;
 		}
 
-		TictactoeGame game = new TictactoeGame(Bukkit.getPlayer(sender.getName()), Bukkit.getPlayer(args[1]));
-		game.start();
+		Player invitee = Bukkit.getPlayer(args[1]);
+		assert invitee != null;
+		TextComponent invitationMessage = MessageSender.getPrefixTextComponent()
+				.append(Component.text(sender.getName() + " has invited you to play Tic Tac Toe. ").color(NamedTextColor.GRAY)
+						.append(Component.text("[Click to accept]"))
+						.clickEvent(ClickEvent.callback(
+								event -> {
+									TictactoeGame game = new TictactoeGame(Bukkit.getPlayer(sender.getName()), invitee);
+									game.start();
+								}
+						))
+		);
+
+		invitee.sendMessage(invitationMessage);
+		MessageSender.send("Invitation has been sent to " + invitee.getName(), sender, MessageStatus.SUCCESS);
 	}
 }

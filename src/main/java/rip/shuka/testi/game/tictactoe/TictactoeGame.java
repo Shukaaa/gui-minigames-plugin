@@ -35,7 +35,7 @@ public class TictactoeGame {
 		player2.inventoryHolder().initStats(stats, player1.player(), player2.player());
 	}
 
-	public void receiveClick(Player player, TictactoeAction action, int row, int col) {
+	public void receiveAction(Player player, TictactoeAction action, int row, int col) {
 		boolean isPlayer1 = player.getName().equals(player1.player().getName());
 
 		if (action == TictactoeAction.QUIT) {

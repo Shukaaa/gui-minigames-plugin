@@ -68,7 +68,7 @@ public class TictactoeInventory implements InventoryHolder {
 
 	public void click(Player player, int index) {
 		if (index == quitIndex) {
-			game.receiveClick(player, TictactoeAction.QUIT, 0, 0);
+			game.receiveAction(player, TictactoeAction.QUIT, 0, 0);
 			return;
 		}
 
@@ -76,7 +76,7 @@ public class TictactoeInventory implements InventoryHolder {
 			int row = index / 9;
 			int col = (index % 9) - 6;
 
-			game.receiveClick(player, TictactoeAction.PLACE, row, col);
+			game.receiveAction(player, TictactoeAction.PLACE, row, col);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class TictactoeInventory implements InventoryHolder {
 			player2wins = stats.player1Wins();
 		}
 
-		int totalGames = player1wins + player2wins + stats.draws();
+		int totalGames = player1wins + player2wins;
 		double player1WinRate = Math.round(totalGames > 0 ? (player1wins * 100.0) / totalGames : 0.0);
 		double player2WinRate = Math.round(totalGames > 0 ? (player2wins * 100.0) / totalGames : 0.0);
 
